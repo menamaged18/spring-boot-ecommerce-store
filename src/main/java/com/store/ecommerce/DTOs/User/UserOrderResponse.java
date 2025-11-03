@@ -1,7 +1,11 @@
 package com.store.ecommerce.DTOs.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.store.ecommerce.DTOs.Order.WithoutUserOrderResponse;
 import com.store.ecommerce.model.CustomUser;
 
 import lombok.Getter;
@@ -9,7 +13,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class UserResponse {
+public class UserOrderResponse {
     private Long id;
     private String username;
     private String email;
@@ -18,10 +22,11 @@ public class UserResponse {
     private LocalDateTime updated_at;
     private LocalDateTime last_login;
     private Boolean is_active;
+    private List<WithoutUserOrderResponse> orders = new ArrayList<>();
 
-    public UserResponse(){}
+    public UserOrderResponse(){}
 
-    public UserResponse(CustomUser _CustomUser){
+    public UserOrderResponse(CustomUser _CustomUser){
         this.id = _CustomUser.getId();
         this.email = _CustomUser.getEmail();
         this.username = _CustomUser.getName();
@@ -30,6 +35,6 @@ public class UserResponse {
         this.updated_at = _CustomUser.getUpdated_at();
         this.last_login = _CustomUser.getLast_login();
         this.is_active = _CustomUser.getIs_active();
-    }
-
+        this.orders = _CustomUser.getOrders().stream().map(WithoutUserOrderResponse::new).collect(Collectors.toList());
+    } 
 }

@@ -1,20 +1,25 @@
 package com.store.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Id; 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 @Entity
-public class OrderDetails {
+@Table(name = "Order_items")
+public class OrderItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order; 
 
     @ManyToOne 
@@ -23,8 +28,8 @@ public class OrderDetails {
 
     private Integer productQuantity;
 
-    public OrderDetails(){}
-    public OrderDetails(Order ord, Product prod, int quantity){
+    public OrderItems(){}
+    public OrderItems(Order ord, Product prod, int quantity){
         this.order = ord;
         this.product = prod;
         this.productQuantity = quantity;

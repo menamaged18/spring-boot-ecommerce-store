@@ -5,11 +5,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.store.ecommerce.DTOs.Product.ProductResponse;
 import com.store.ecommerce.model.Product;
 import com.store.ecommerce.service.ProductService;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,28 +30,30 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Product> addProduct(@RequestBody Product prod) {
+    public ResponseEntity<ProductResponse> addProduct(@RequestBody Product prod) {
         Product newProduct = prodServ.addProduct(prod);
+        ProductResponse response = new ProductResponse(newProduct);
         // Return a 201 Created status
         return ResponseEntity.created(
             // (Optional but Recommended) Include the location of the new resource
-            URI.create("/products/" + newProduct.getId())
-        ).body(newProduct); 
+            URI.create("/products/" + response.getId())
+        ).body(response); 
     }
 
     @GetMapping("{id}")
-    public Product getProductById(@PathVariable Long id) {
-        return prodServ.returnProductById(id);
+    public ProductResponse getProductById(@PathVariable Long id) {
+        ProductResponse response = new ProductResponse(prodServ.returnProductById(id));
+        return response;
     }
 
     @GetMapping("")
-    public List<Product> getAllProducts() {
-        return prodServ.allProducts();
+    public List<ProductResponse> getAllProducts() {    
+        return prodServ.allProducts().stream().map(ProductResponse::new).collect(Collectors.toList());
     }
     
     @PutMapping("edit/{id}")
-    public Product editProduct(@PathVariable Long id, @RequestBody Product newProduct) {
-        return prodServ.EditProduct(id, newProduct);
+    public ProductResponse editProduct(@PathVariable Long id, @RequestBody Product newProduct) {
+        return new ProductResponse(prodServ.EditProduct(id, newProduct));
     }
 
     @DeleteMapping("delete/{id}")

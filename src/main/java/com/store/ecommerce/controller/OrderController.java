@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.store.ecommerce.DTOs.Order.OrderResponse;
+import com.store.ecommerce.DTOs.Order.OrderServiceReq;
 import com.store.ecommerce.model.Order;
 import com.store.ecommerce.service.OrderService;
 
@@ -32,9 +33,20 @@ public class OrderController {
     // OrderResponse to hide Password and sensitive data related to the user 
     // because without OrderResponse this returns the full CustomUser entity information
 
-    @PostMapping("")
-    public ResponseEntity<OrderResponse> addOrder(@RequestBody Long UserId){
-        Order newOrder = ordServ.makeOrder(UserId);
+    @PostMapping("add")
+    public ResponseEntity<OrderResponse> createOrderByUserAndProduct(@RequestBody OrderServiceReq orderCreation){
+        Order newOrder = ordServ.makeOrderByProductId(orderCreation.getUserId(), orderCreation.getProductId(), 
+                                                    orderCreation.getProductQuantity(),
+                                                    orderCreation.getShipping_address(),
+                                                    orderCreation.getPayment_Type());
+        return ResponseEntity.created(
+            URI.create("/order/" + newOrder.getId())
+        ).body(new OrderResponse(newOrder));
+    }
+
+    @PostMapping("add/by-Cart/{cartId}")
+    public ResponseEntity<OrderResponse> createOrderByCart(@PathVariable Long cartId){
+        Order newOrder = ordServ.makeOrderByCart(cartId);
         return ResponseEntity.created(
             URI.create("/order/" + newOrder.getId())
         ).body(new OrderResponse(newOrder));

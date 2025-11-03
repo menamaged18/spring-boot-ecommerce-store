@@ -2,6 +2,7 @@ package com.store.ecommerce.DTOs.User;
 
 import java.time.LocalDateTime;
 
+import com.store.ecommerce.DTOs.Cart.CartWithItemsResponse;
 import com.store.ecommerce.model.CustomUser;
 
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class UserResponse {
+public class UserCartResponse {
     private Long id;
     private String username;
     private String email;
@@ -18,10 +19,11 @@ public class UserResponse {
     private LocalDateTime updated_at;
     private LocalDateTime last_login;
     private Boolean is_active;
+    private CartWithItemsResponse cart;
 
-    public UserResponse(){}
+    public UserCartResponse(){}
 
-    public UserResponse(CustomUser _CustomUser){
+    public UserCartResponse(CustomUser _CustomUser){
         this.id = _CustomUser.getId();
         this.email = _CustomUser.getEmail();
         this.username = _CustomUser.getName();
@@ -30,6 +32,6 @@ public class UserResponse {
         this.updated_at = _CustomUser.getUpdated_at();
         this.last_login = _CustomUser.getLast_login();
         this.is_active = _CustomUser.getIs_active();
-    }
-
+        this.cart = new CartWithItemsResponse(_CustomUser.getCart());
+    } 
 }

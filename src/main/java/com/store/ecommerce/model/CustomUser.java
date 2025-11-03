@@ -1,18 +1,27 @@
 package com.store.ecommerce.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "custom_user")
+@Setter
+@Getter
 public class CustomUser {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
@@ -20,9 +29,22 @@ public class CustomUser {
     private String name;
     private String email;
     private String password;
+    private String phone;
+    private LocalDateTime created_at = LocalDateTime.now();
+    private LocalDateTime updated_at;
+    private LocalDateTime last_login;
+    private Boolean is_active;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore                 // <- prevent serialization of user.orders
     private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Wishlist> wishList;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Cart cart;
 
     public CustomUser(){};
     public CustomUser(long _id, String _name, String _email, String _password){
@@ -32,31 +54,4 @@ public class CustomUser {
         this.password = _password;
     };
 
-    public void setName(String _name){
-        this.name = _name;
-    }
-
-    public void setEmail(String _email){
-        this.email = _email;
-    }
-
-    public void setPassword(String _password){
-        this.password = _password;
-    }
-
-    public long getId(){
-        return id;
-    }
-
-    public String getName(){
-        return name;
-    }
-    
-    public String getEmail(){
-        return email;
-    }
-
-    public String getPassword(){
-        return password;
-    }
 }

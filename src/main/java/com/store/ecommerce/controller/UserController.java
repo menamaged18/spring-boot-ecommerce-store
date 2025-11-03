@@ -3,6 +3,9 @@ package com.store.ecommerce.controller;
 import com.store.ecommerce.DTOs.User.UserRequest;
 import com.store.ecommerce.DTOs.User.UserResponse;
 import com.store.ecommerce.service.UserService;
+import com.store.ecommerce.DTOs.User.UserCartResponse;
+import com.store.ecommerce.DTOs.User.UserOrderResponse;
+import com.store.ecommerce.DTOs.User.UserWishlistResponse;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,7 +14,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,15 +38,29 @@ public class UserController {
         return userService.FindUserById(id);
     }
 
+    @GetMapping("/getUserOrders/{id}")
+    public UserOrderResponse GetUserOrders(@PathVariable Long id) {
+        return userService.getUserOrders(id);
+    }
+
+    @GetMapping("/getUserCart/{id}")
+    public UserCartResponse GetUserCart(@PathVariable Long id) {
+        return userService.getUserCart(id);
+    }
+
+    @GetMapping("/getUserWishlist/{id}")
+    public UserWishlistResponse GetUserWishlist(@PathVariable Long id) {
+        return userService.getUserWishlist(id);
+    }
+
     @PostMapping("/add")
-    public UserResponse postMethodName(@RequestBody UserRequest user) {
+    public UserResponse registerUser(@RequestBody UserRequest user) {
         return userService.RegisterUser(user);
     }
 
-    @PutMapping("edit/{id}")
-    public UserRequest putMethodName(@PathVariable Long id, @RequestBody UserRequest entity) {
-        userService.EditUser(id, entity);
-        return entity;
+    @PutMapping("/edit/{id}")
+    public UserResponse editUser(@PathVariable Long id, @RequestBody UserRequest entity) {
+        return userService.EditUser(id, entity);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -53,6 +69,5 @@ public class UserController {
         // Returns HTTP Status 204 (No Content)
         return ResponseEntity.noContent().build();
     }
-    
     
 }

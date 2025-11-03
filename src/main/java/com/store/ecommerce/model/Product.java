@@ -1,20 +1,37 @@
 package com.store.ecommerce.model;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Table(name = "product")
+@Setter
+@Getter
 public class Product {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
-
-    private Long quantity;
     private String name;
+    private Long quantity;
+    private Double price;
+    private Double cost_price;
     private String category;
     private String description;
+    private String brand;
+    private Double weight;
+    private LocalDateTime created_at = LocalDateTime.now();
+    private LocalDateTime updated_at;
+    private Boolean is_active;
 
     public Product(){}
     public Product(String _name, String _category, String _description, long _quantity){
@@ -24,41 +41,8 @@ public class Product {
         this.quantity = _quantity;
     }
 
-    public Long getId(){
-        return this.id;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reviews> reviews;
 
 }
 

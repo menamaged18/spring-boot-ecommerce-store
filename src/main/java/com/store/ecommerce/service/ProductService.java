@@ -53,16 +53,31 @@ public class ProductService {
         return productRepo.save(oldProduct);
     }
 
-    public void reduceStock(Product product, int quantityToReduce) {
+    public void updateStock(Product product, int newQuantity, int oldQuantity) {
         Long currentQuantity = product.getQuantity();
 
-        if (currentQuantity == null || currentQuantity < quantityToReduce) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
-                "Insufficient stock for product ID: " + product.getId() + 
-                ". Requested: " + quantityToReduce + ", Available: " + currentQuantity);
+        // This calculates the *change* in quantity
+        // Example 1 (Adding to cart): new=5, old=0. Change = 5
+        // Example 2 (Editing cart): new=3, old=5. Change = -2 (add 2 back to stock)
+        // Example 3 (Editing cart): new=8, old=5. Change = 3 (remove 3 more from stock)
+        int quantityChange = newQuantity - oldQuantity;
+
+        // add to stock case
+        if (quantityChange < 0) {
+            product.setQuantity(currentQuantity + Math.abs(quantityChange));
+        }else{
+            if (currentQuantity == null || currentQuantity < quantityChange) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                    "Insufficient stock for product ID: " + product.getId() + 
+                    ". Requested: " + newQuantity + ", Available: " + currentQuantity);
+            }
+            product.setQuantity(currentQuantity - quantityChange);
         }
         
-        product.setQuantity(currentQuantity - quantityToReduce);
         productRepo.save(product);
+    }
+
+    public void updateStock(Product product, int newQuantity){
+        updateStock(product, newQuantity, 0);
     }
 }
